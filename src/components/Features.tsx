@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Zap, Download, Palette, Star, Video, Crown, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -87,7 +86,7 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-50 overflow-hidden">
+    <section id="features" className="py-20 bg-gray-50 overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 animate-fade-in">

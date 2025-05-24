@@ -2,10 +2,11 @@
 import { Check, Star, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const Pricing = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-900 to-purple-900">
+    <section id="pricing" className="py-20 bg-gradient-to-br from-gray-900 to-purple-900">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -53,9 +54,11 @@ const Pricing = () => {
                   Remove watermark with ads
                 </li>
               </ul>
-              <Button className="w-full mt-8 bg-blue-600 hover:bg-blue-700">
-                Get Started Free
-              </Button>
+              <Link to="/auth">
+                <Button className="w-full mt-8 bg-blue-600 hover:bg-blue-700">
+                  Get Started Free
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
@@ -108,9 +111,11 @@ const Pricing = () => {
                   Priority support
                 </li>
               </ul>
-              <Button className="w-full mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                Start Pro Trial
-              </Button>
+              <Link to="/auth">
+                <Button className="w-full mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                  Start Pro Trial
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
