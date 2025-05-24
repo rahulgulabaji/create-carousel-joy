@@ -1,5 +1,4 @@
-
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useSearchParams } from "react";
 import { Plus, Download, Eye, Palette, Type, Image, Star, Trash2, Copy, Move } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,8 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { Template } from "@/data/templates";
+import { useSearchParams } from "react-router-dom";
 
 const CarouselBuilder = () => {
+  const [searchParams] = useSearchParams();
+  
   const [slides, setSlides] = useState([
     { 
       id: 1, 
@@ -42,6 +45,28 @@ const CarouselBuilder = () => {
   const [selectedSlide, setSelectedSlide] = useState(slides[0]);
   const [isPremium, setIsPremium] = useState(false);
   const [isFullPreview, setIsFullPreview] = useState(false);
+
+  // Load template if coming from templates page
+  useEffect(() => {
+    const templateParam = searchParams.get('template');
+    if (templateParam === 'true') {
+      const savedTemplate = localStorage.getItem('selectedTemplate');
+      if (savedTemplate) {
+        try {
+          const template: Template = JSON.parse(savedTemplate);
+          setSlides(template.slides);
+          setSelectedSlide(template.slides[0]);
+          localStorage.removeItem('selectedTemplate');
+          toast({
+            title: "Template Loaded",
+            description: `"${template.name}" template loaded successfully!`
+          });
+        } catch (error) {
+          console.error('Failed to load template:', error);
+        }
+      }
+    }
+  }, [searchParams]);
 
   const backgroundOptions = useMemo(() => [
     { name: "Purple Gradient", class: "bg-gradient-to-br from-purple-500 to-pink-500" },

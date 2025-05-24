@@ -2,86 +2,32 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Search, Filter, Star, Download, Eye } from "lucide-react";
+import TemplatePreview from "@/components/TemplatePreview";
+import { Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { templates, categories, Template } from "@/data/templates";
+import { useNavigate } from "react-router-dom";
 
 const Templates = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-
-  const categories = [
-    { id: "all", name: "All Templates", count: 127 },
-    { id: "quotes", name: "Quotes", count: 32 },
-    { id: "tips", name: "Tips & Tutorials", count: 28 },
-    { id: "promo", name: "Promotional", count: 24 },
-    { id: "education", name: "Educational", count: 21 },
-    { id: "business", name: "Business", count: 22 }
-  ];
-
-  const templates = [
-    {
-      id: 1,
-      name: "Motivational Quote",
-      category: "quotes",
-      premium: false,
-      downloads: 1250,
-      rating: 4.8,
-      preview: "bg-gradient-to-br from-purple-600 to-pink-500"
-    },
-    {
-      id: 2,
-      name: "Social Media Tips",
-      category: "tips",
-      premium: true,
-      downloads: 890,
-      rating: 4.9,
-      preview: "bg-gradient-to-br from-blue-600 to-cyan-500"
-    },
-    {
-      id: 3,
-      name: "Product Launch",
-      category: "promo",
-      premium: true,
-      downloads: 654,
-      rating: 4.7,
-      preview: "bg-gradient-to-br from-orange-600 to-red-500"
-    },
-    {
-      id: 4,
-      name: "Business Strategy",
-      category: "business",
-      premium: false,
-      downloads: 2100,
-      rating: 4.6,
-      preview: "bg-gradient-to-br from-green-600 to-teal-500"
-    },
-    {
-      id: 5,
-      name: "Educational Content",
-      category: "education",
-      premium: true,
-      downloads: 1450,
-      rating: 4.8,
-      preview: "bg-gradient-to-br from-indigo-600 to-purple-500"
-    },
-    {
-      id: 6,
-      name: "Inspirational Story",
-      category: "quotes",
-      premium: false,
-      downloads: 980,
-      rating: 4.5,
-      preview: "bg-gradient-to-br from-pink-600 to-rose-500"
-    }
-  ];
+  const navigate = useNavigate();
 
   const filteredTemplates = templates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         template.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === "all" || template.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const handleUseTemplate = (template: Template) => {
+    // Store the template in localStorage for the builder to pick up
+    localStorage.setItem('selectedTemplate', JSON.stringify(template));
+    // Navigate to the home page where the builder is
+    navigate('/?template=true');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,7 +41,7 @@ const Templates = () => {
               Professional Templates
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose from our curated collection of high-converting carousel templates
+              Choose from our curated collection of {templates.length} high-converting carousel templates
             </p>
           </div>
 
@@ -104,7 +50,7 @@ const Templates = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Search templates..."
+                placeholder="Search templates by name, description, or tags..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -139,54 +85,54 @@ const Templates = () => {
                     </button>
                   ))}
                 </div>
+
+                {/* Filter Info */}
+                <div className="mt-6 pt-6 border-t">
+                  <h4 className="font-medium text-gray-900 mb-2">Results</h4>
+                  <p className="text-sm text-gray-600">
+                    Showing {filteredTemplates.length} of {templates.length} templates
+                  </p>
+                  {searchTerm && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Searching for "{searchTerm}"
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Templates Grid */}
             <div className="lg:col-span-3">
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredTemplates.map((template) => (
-                  <Card key={template.id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
-                    <CardContent className="p-0">
-                      {/* Template Preview */}
-                      <div className={`aspect-square ${template.preview} rounded-t-lg relative overflow-hidden`}>
-                        {template.premium && (
-                          <div className="absolute top-3 right-3 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                            PRO
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                            <Button size="sm" variant="secondary">
-                              <Eye className="w-4 h-4 mr-2" />
-                              Preview
-                            </Button>
-                            <Button size="sm">
-                              <Download className="w-4 h-4 mr-2" />
-                              Use
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Template Info */}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
-                        <div className="flex items-center justify-between text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                            <span>{template.rating}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Download className="w-4 h-4" />
-                            <span>{template.downloads}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              {filteredTemplates.length > 0 ? (
+                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {filteredTemplates.map((template) => (
+                    <TemplatePreview 
+                      key={template.id} 
+                      template={template}
+                      onUseTemplate={handleUseTemplate}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <Search className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No templates found</h3>
+                  <p className="text-gray-600 mb-4">
+                    Try adjusting your search terms or category filter
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchTerm("");
+                      setSelectedCategory("all");
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
